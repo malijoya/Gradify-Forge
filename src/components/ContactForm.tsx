@@ -9,7 +9,7 @@ import Select from "./Select";
 const serviceOptions = [...services.map((s) => s.title), "Something else"];
 
 const input =
-    "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-500 text-white placeholder:text-gray-600";
+    "w-full bg-white/[0.03] border border-white/10 rounded-[10px] px-4 py-3 text-[15px] focus:outline-none focus:border-violet-400/60 focus:ring-2 focus:ring-violet-500/15 hover:border-white/20 transition-colors text-white placeholder:text-gray-600";
 
 export default function ContactForm() {
     const [state, action, pending] = useActionState<ContactState, FormData>(submitInquiry, undefined);
@@ -28,30 +28,30 @@ export default function ContactForm() {
         <form action={action} className="space-y-5">
             <div className="grid md:grid-cols-2 gap-4">
                 <label className="space-y-2 block">
-                    <span className="text-sm font-medium text-gray-300">Your name *</span>
+                    <span className="font-mono text-[12px] text-gray-400">Your name *</span>
                     <input name="name" required maxLength={120} className={input} placeholder="Jane Doe" />
                 </label>
                 <label className="space-y-2 block">
-                    <span className="text-sm font-medium text-gray-300">Email *</span>
+                    <span className="font-mono text-[12px] text-gray-400">Email *</span>
                     <input name="email" type="email" required className={input} placeholder="jane@company.com" />
                 </label>
             </div>
             <label className="space-y-2 block">
-                <span className="text-sm font-medium text-gray-300">Company (optional)</span>
+                <span className="font-mono text-[12px] text-gray-400">Company (optional)</span>
                 <input name="company" className={input} placeholder="Acme Inc." />
             </label>
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <span className="text-sm font-medium text-gray-300">What do you need?</span>
+                    <span className="font-mono text-[12px] text-gray-400">What do you need?</span>
                     <Select name="service" placeholder="Select a service" options={serviceOptions} />
                 </div>
                 <div className="space-y-2">
-                    <span className="text-sm font-medium text-gray-300">Budget</span>
+                    <span className="font-mono text-[12px] text-gray-400">Budget</span>
                     <Select name="budget" placeholder="Select a range" options={budgets} />
                 </div>
             </div>
             <label className="space-y-2 block">
-                <span className="text-sm font-medium text-gray-300">Tell us about your project *</span>
+                <span className="font-mono text-[12px] text-gray-400">Tell us about your project *</span>
                 <textarea name="message" required rows={5} maxLength={5000} className={`${input} resize-none`}
                     placeholder="Goals, features, timeline, links to anything similar..." />
             </label>
@@ -63,9 +63,9 @@ export default function ContactForm() {
 
             <button
                 disabled={pending}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-4 rounded-xl font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group disabled:opacity-50 text-lg shadow-lg shadow-purple-900/20"
+                className="w-full h-12 rounded-full bg-white text-black text-[15px] font-medium hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50 shadow-[0_0_30px_-8px_rgba(255,255,255,0.5)]"
             >
-                {pending ? "Sending..." : <>Send Message <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>}
+                {pending ? "Sending..." : <>Send message <Send className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" /></>}
             </button>
         </form>
     );

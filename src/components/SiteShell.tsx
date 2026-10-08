@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Background from "./Background";
+import RevealObserver from "./RevealObserver";
 
 /** Wraps public pages with the navbar and footer; the admin panel renders its own chrome. */
 export default function SiteShell({
@@ -19,6 +20,7 @@ export default function SiteShell({
     return (
         <div className="relative isolate">
             <Background />
+            <RevealObserver />
             {navbar}
             <main className="pt-20 min-h-screen">{children}</main>
             {footer}

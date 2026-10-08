@@ -18,8 +18,8 @@ const navItems = [
 function Logo() {
     return (
         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <LogoMark className="transition-transform group-hover:scale-105" />
-            <span className="font-semibold tracking-tight text-white text-[17px]">{site.name}</span>
+            <LogoMark className="w-7 h-7 transition-transform group-hover:scale-105" />
+            <span className="font-medium tracking-tight text-white text-[17px]">{site.name}</span>
         </Link>
     );
 }
@@ -39,46 +39,42 @@ export default function Navbar() {
     const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
     return (
-        <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
-            <nav
-                className={clsx(
-                    "relative w-full max-w-5xl h-14 flex items-center justify-between rounded-full border pl-4 pr-2 transition-all duration-300",
-                    scrolled || open
-                        ? "bg-[#0b0b14]/75 border-white/10 backdrop-blur-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)]"
-                        : "bg-white/[0.03] border-white/[0.07] backdrop-blur-md"
-                )}
-            >
-                {/* Hairline highlight along the top edge */}
-                <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-
+        <header
+            className={clsx(
+                "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+                scrolled || open ? "bg-[#06060c]/90 border-b border-white/[0.06]" : "border-b border-transparent"
+            )}
+        >
+            <nav className="relative mx-auto max-w-[1188px] h-20 px-6 flex items-center justify-between">
                 <Logo />
 
-                <ul className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+                <ul className="hidden md:flex items-center gap-1.5">
                     {navItems.map((item) => (
                         <li key={item.href}>
                             <Link
                                 href={item.href}
+                                aria-current={isActive(item.href) ? "page" : undefined}
                                 className={clsx(
-                                    "relative px-4 py-2 rounded-full text-sm font-medium transition-colors",
-                                    isActive(item.href) ? "text-white bg-white/[0.08]" : "text-gray-400 hover:text-white"
+                                    "px-3.5 py-2 text-[13px] transition-colors",
+                                    isActive(item.href) ? "text-white" : "text-gray-400 hover:text-white"
                                 )}
                             >
                                 {item.name}
-                                {isActive(item.href) && (
-                                    <span className="absolute left-1/2 -translate-x-1/2 -bottom-[3px] w-5 h-[2px] rounded-full bg-gradient-to-r from-violet-400 to-pink-400" />
-                                )}
                             </Link>
                         </li>
                     ))}
                 </ul>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
+                    <span className="hidden lg:inline-flex items-center gap-2 h-10 px-3.5 rounded-full border border-white/15 bg-black/40 font-mono text-[13px] text-gray-200">
+                        <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.9)]" />
+                        open for new projects
+                    </span>
                     <Link
                         href="/contact"
-                        className="hidden sm:inline-flex items-center gap-1.5 h-10 pl-4 pr-3 rounded-full bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors shadow-[0_0_24px_-6px_rgba(255,255,255,0.5)] group"
+                        className="hidden sm:inline-flex items-center h-9 px-5 rounded-full bg-white text-black text-sm font-medium hover:bg-gray-200 transition-colors shadow-[0_0_24px_-6px_rgba(255,255,255,0.5)]"
                     >
                         Start a Project
-                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </Link>
                     <button
                         onClick={() => setOpen(!open)}
@@ -93,7 +89,7 @@ export default function Navbar() {
                 {/* Mobile menu */}
                 <div
                     className={clsx(
-                        "md:hidden absolute inset-x-0 top-full mt-2 origin-top rounded-3xl border border-white/10 bg-[#0b0b14]/95 backdrop-blur-xl p-2 shadow-2xl transition-all duration-200",
+                        "md:hidden absolute inset-x-4 top-full origin-top rounded-3xl border border-white/10 bg-[#0b0b14] p-2 shadow-2xl transition-all duration-200",
                         open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
                     )}
                 >

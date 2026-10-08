@@ -113,8 +113,8 @@ export default function Select({ name, options, placeholder, defaultValue = "" }
                 onClick={() => (open ? setOpen(false) : openMenu())}
                 onKeyDown={onKeyDown}
                 className={clsx(
-                    "w-full flex items-center justify-between gap-2 bg-black/40 border rounded-xl px-4 py-3 text-left transition-colors focus:outline-none",
-                    open ? "border-purple-500 ring-2 ring-purple-500/20" : "border-white/10 hover:border-white/20 focus:border-purple-500"
+                    "w-full flex items-center justify-between gap-2 bg-white/[0.03] border rounded-[10px] px-4 py-3 text-[15px] text-left transition-colors focus:outline-none",
+                    open ? "border-violet-400/60 ring-2 ring-violet-500/15" : "border-white/10 hover:border-white/20 focus:border-violet-400/60"
                 )}
             >
                 <span className={clsx("truncate", value ? "text-white" : "text-gray-500")}>{value || placeholder}</span>
@@ -126,7 +126,7 @@ export default function Select({ name, options, placeholder, defaultValue = "" }
                 id={`${id}-list`}
                 role="listbox"
                 className={clsx(
-                    "absolute z-30 inset-x-0 max-h-64 overflow-y-auto p-1.5 rounded-xl border border-white/10 bg-[#0e0e18]/95 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] transition-all duration-150",
+                    "absolute z-30 inset-x-0 max-h-64 overflow-y-auto p-1.5 rounded-[12px] border border-white/10 bg-[#0e0e16] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] transition-all duration-150",
                     dropUp ? "bottom-full mb-2 origin-bottom" : "top-full mt-2 origin-top",
                     open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
                 )}
