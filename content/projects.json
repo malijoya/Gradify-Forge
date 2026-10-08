@@ -1,0 +1,52 @@
+[
+  {
+    "title": "E-commerce Platform for a Client",
+    "url": "https://www.orchidbloom.pk/",
+    "description": "This is a website for orchid bloom. For the client, with custom animations, custom design and custom images. All work is done according to the clients demand and budget",
+    "category": "Website",
+    "tags": [
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "featured": true,
+    "published": true,
+    "thumbnail": "bd412e37-77db-415f-9596-7343b5fe9ef4.webp",
+    "id": "36a5f1b5-eb0e-46d8-8130-9d384fa00f30",
+    "createdAt": "2026-10-08T16:03:16.898Z",
+    "updatedAt": "2026-10-08T16:03:16.898Z"
+  },
+  {
+    "title": "Tech Harbor Official | Leading IT Services in Islamabad, Pakistan",
+    "url": "https://www.techharborofficial.com/",
+    "description": "Expert Cybersecurity, Web Development, AI Automation & Digital Marketing. Pakistan",
+    "category": "Web App",
+    "tags": [
+      "React",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "featured": true,
+    "published": true,
+    "thumbnail": "7093b964-dd3f-4939-8ab2-f64af0938d49.webp",
+    "id": "5da07c28-f465-464c-854a-09331924ada7",
+    "createdAt": "2026-10-08T18:22:04.445Z",
+    "updatedAt": "2026-10-08T18:22:04.445Z"
+  },
+  {
+    "title": "Ayan Montessori Institute | Nurturing Young Minds & Educator Training",
+    "url": "https://ayan-montessori-institute.vercel.app/",
+    "description": "Official website of Ayan Montessori Institute. Providing authentic Montessori early childhood education, teacher training diplomas, and holistic child development.",
+    "category": "Web App",
+    "tags": [
+      "Next.js",
+      "Tailwind CSS",
+      "Node.js"
+    ],
+    "featured": true,
+    "published": true,
+    "thumbnail": "7f120415-2504-4bd5-b64c-b0d44771bcd3.webp",
+    "id": "4680673a-c099-4724-a29f-2b85ae04a72d",
+    "createdAt": "2026-10-08T18:28:13.895Z",
+    "updatedAt": "2026-10-08T19:20:56.605Z"
+  }
+]

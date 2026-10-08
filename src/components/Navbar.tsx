@@ -2,92 +2,124 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Menu, X, Home, Briefcase, Layers, ShoppingCart, LayoutDashboard } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { site } from "@/lib/site";
+import LogoMark from "./LogoMark";
 
 const navItems = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "Services", href: "/services", icon: Briefcase },
-    { name: "Portfolio", href: "/portfolio", icon: Layers },
-    { name: "Order", href: "/order", icon: ShoppingCart },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Home", href: "/" },
+    { name: "Services", href: "/services" },
+    { name: "Portfolio", href: "/portfolio" },
+    { name: "Contact", href: "/contact" },
 ];
+
+function Logo() {
+    return (
+        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+            <LogoMark className="transition-transform group-hover:scale-105" />
+            <span className="font-semibold tracking-tight text-white text-[17px]">{site.name}</span>
+        </Link>
+    );
+}
 
 export default function Navbar() {
     const pathname = usePathname();
-    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 12);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                    <div className="flex items-center">
-                        <Link href="/" className="flex-shrink-0">
-                            <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                                GradifyForge
-                            </span>
-                        </Link>
-                    </div>
-                    <div className="hidden md:block">
-                        <div className="ml-10 flex items-baseline space-x-4">
-                            {navItems.map((item) => {
-                                const isActive = pathname === item.href;
-                                return (
-                                    <Link
-                                        key={item.name}
-                                        href={item.href}
-                                        className={twMerge(
-                                            "px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 flex items-center gap-2",
-                                            isActive
-                                                ? "bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.2)]"
-                                                : "text-gray-300 hover:bg-white/5 hover:text-white"
-                                        )}
-                                    >
-                                        <item.icon className="w-4 h-4" />
-                                        {item.name}
-                                    </Link>
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div className="-mr-2 flex md:hidden">
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none"
-                        >
-                            <span className="sr-only">Open main menu</span>
-                            {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
+            <nav
+                className={clsx(
+                    "relative w-full max-w-5xl h-14 flex items-center justify-between rounded-full border pl-4 pr-2 transition-all duration-300",
+                    scrolled || open
+                        ? "bg-[#0b0b14]/75 border-white/10 backdrop-blur-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)]"
+                        : "bg-white/[0.03] border-white/[0.07] backdrop-blur-md"
+                )}
+            >
+                {/* Hairline highlight along the top edge */}
+                <span className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
-            {/* Mobile menu */}
-            <div className={clsx("md:hidden", isOpen ? "block" : "hidden")}>
-                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black/90 backdrop-blur-xl border-b border-white/10">
-                    {navItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        return (
+                <Logo />
+
+                <ul className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+                    {navItems.map((item) => (
+                        <li key={item.href}>
                             <Link
-                                key={item.name}
                                 href={item.href}
-                                onClick={() => setIsOpen(false)}
-                                className={twMerge(
-                                    "block px-3 py-2 rounded-md text-base font-medium transition-colors flex items-center gap-2",
-                                    isActive
-                                        ? "bg-white/10 text-white"
-                                        : "text-gray-300 hover:bg-white/5 hover:text-white"
+                                className={clsx(
+                                    "relative px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                                    isActive(item.href) ? "text-white bg-white/[0.08]" : "text-gray-400 hover:text-white"
                                 )}
                             >
-                                <item.icon className="w-4 h-4" />
                                 {item.name}
+                                {isActive(item.href) && (
+                                    <span className="absolute left-1/2 -translate-x-1/2 -bottom-[3px] w-5 h-[2px] rounded-full bg-gradient-to-r from-violet-400 to-pink-400" />
+                                )}
                             </Link>
-                        );
-                    })}
+                        </li>
+                    ))}
+                </ul>
+
+                <div className="flex items-center gap-2">
+                    <Link
+                        href="/contact"
+                        className="hidden sm:inline-flex items-center gap-1.5 h-10 pl-4 pr-3 rounded-full bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors shadow-[0_0_24px_-6px_rgba(255,255,255,0.5)] group"
+                    >
+                        Start a Project
+                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </Link>
+                    <button
+                        onClick={() => setOpen(!open)}
+                        aria-label={open ? "Close menu" : "Open menu"}
+                        aria-expanded={open}
+                        className="md:hidden grid place-items-center w-10 h-10 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                    >
+                        {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    </button>
                 </div>
-            </div>
-        </nav>
+
+                {/* Mobile menu */}
+                <div
+                    className={clsx(
+                        "md:hidden absolute inset-x-0 top-full mt-2 origin-top rounded-3xl border border-white/10 bg-[#0b0b14]/95 backdrop-blur-xl p-2 shadow-2xl transition-all duration-200",
+                        open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+                    )}
+                >
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setOpen(false)}
+                            className={clsx(
+                                "flex items-center justify-between px-4 py-3 rounded-2xl text-base font-medium transition-colors",
+                                isActive(item.href) ? "bg-white/[0.08] text-white" : "text-gray-300 hover:bg-white/5 hover:text-white"
+                            )}
+                        >
+                            {item.name}
+                            {isActive(item.href) && <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-violet-400 to-pink-400" />}
+                        </Link>
+                    ))}
+                    <Link
+                        href="/contact"
+                        onClick={() => setOpen(false)}
+                        className="mt-2 flex items-center justify-center gap-1.5 h-12 rounded-2xl bg-white text-black font-semibold"
+                    >
+                        Start a Project <ArrowUpRight className="w-4 h-4" />
+                    </Link>
+                </div>
+            </nav>
+        </header>
     );
 }
