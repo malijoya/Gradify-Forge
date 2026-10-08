@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "publish": "git add content public/uploads && git commit -m \"Update portfolio\" && git push"
+    "publish": "node scripts/publish.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
