@@ -23,6 +23,7 @@ export default function Contact() {
     return (
         <div className="flex flex-col min-h-screen">
             <PageHero
+                compact
                 kicker="contact / replies within 24 hours"
                 title={
                     <>
@@ -54,7 +55,7 @@ export default function Contact() {
 
             <div className="relative isolate">
                 <PageStrands />
-                <section aria-label="Send us a message" className="mx-auto w-full max-w-[1188px] px-6 pt-8 pb-28">
+                <section aria-label="Send us a message" className="mx-auto w-full max-w-[1188px] px-6 pt-2 pb-28">
                     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-14 items-start">
                         <div className="space-y-10">
                             <ul className="home-stagger space-y-3">
@@ -92,14 +93,17 @@ export default function Contact() {
                             </div>
                         </div>
 
-                        <div className="home-reveal home-card relative rounded-[22px] p-6 sm:p-9">
-                            <div className="mb-7 flex items-center justify-between font-mono text-[12px] text-gray-500">
+                        <div className="home-reveal relative order-first lg:order-none rounded-[22px] border border-violet-300/20 bg-[#0c0c14] p-6 sm:p-9 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_30px_80px_-30px_rgba(139,92,246,0.45)]">
+                            <span aria-hidden className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/60 to-transparent" />
+                            <div className="mb-2 flex items-center justify-between font-mono text-[12px] text-gray-500">
                                 <span>new inquiry</span>
                                 <span className="flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.9)]" />
                                     open for new projects
                                 </span>
                             </div>
+                            <h2 className="text-[22px] font-medium tracking-tight text-white">Send us a message</h2>
+                            <p className="mt-1 mb-7 text-[14px] text-gray-400">Takes about two minutes. Fields marked * are required.</p>
                             <ContactForm />
                         </div>
                     </div>

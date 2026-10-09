@@ -6,7 +6,7 @@ export const site = {
     tagline: "We design and build software that grows your business.",
     description:
         "GradifyForge is a software studio building web apps, mobile apps, AI solutions and IoT systems for startups, businesses and innovators.",
-    email: "hello@gradifyforge.com",
+    email: "contactgradifyforge@gmail.com",
     // Full international number without "+" or spaces, used for the WhatsApp button. Leave empty to hide it.
     whatsapp: "",
     location: "Remote · Worldwide",

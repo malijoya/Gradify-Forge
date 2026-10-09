@@ -113,8 +113,8 @@ export default function Select({ name, options, placeholder, defaultValue = "" }
                 onClick={() => (open ? setOpen(false) : openMenu())}
                 onKeyDown={onKeyDown}
                 className={clsx(
-                    "w-full flex items-center justify-between gap-2 bg-white/[0.03] border rounded-[10px] px-4 py-3 text-[15px] text-left transition-colors focus:outline-none",
-                    open ? "border-violet-400/60 ring-2 ring-violet-500/15" : "border-white/10 hover:border-white/20 focus:border-violet-400/60"
+                    "w-full flex items-center justify-between gap-2 bg-[#06060b] border rounded-[10px] px-4 py-3 min-h-12 text-[15px] text-left transition-colors focus:outline-none",
+                    open ? "border-violet-400 ring-4 ring-violet-500/20" : "border-white/[0.16] hover:border-white/30 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/20"
                 )}
             >
                 <span className={clsx("truncate", value ? "text-white" : "text-gray-500")}>{value || placeholder}</span>

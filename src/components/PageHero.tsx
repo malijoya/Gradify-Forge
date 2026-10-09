@@ -9,11 +9,14 @@ export default function PageHero({
     title,
     lead,
     aside,
+    compact,
 }: {
     kicker: string;
     title: ReactNode;
     lead?: ReactNode;
     aside?: ReactNode;
+    /** Less vertical space, for pages where the content below should start high (e.g. a form). */
+    compact?: boolean;
 }) {
     return (
         <section className="relative -mt-20 pt-20 overflow-hidden">
@@ -24,7 +27,7 @@ export default function PageHero({
                 className="pointer-events-none absolute right-[-10%] top-[-30%] w-[48rem] h-[36rem] rounded-full bg-[radial-gradient(ellipse,rgba(139,92,246,0.22)_0%,rgba(192,38,211,0.07)_45%,transparent_70%)]"
             />
 
-            <div className="relative mx-auto max-w-[1188px] px-6 pt-20 pb-16 sm:pt-28 sm:pb-20 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] lg:items-end">
+            <div className={`relative mx-auto max-w-[1188px] px-6 ${compact ? "pt-14 pb-10 sm:pt-16 sm:pb-12" : "pt-20 pb-16 sm:pt-28 sm:pb-20"} grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] lg:items-end`}>
                 <div>
                     <p className="hero-blur-in inline-flex items-center gap-2.5 h-8 px-3 rounded-md border border-violet-400/35 bg-violet-500/[0.04] font-mono text-[12px] sm:text-[13px] text-gray-200">
                         <span aria-hidden className="w-1.5 h-1.5 bg-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.9)]" />
