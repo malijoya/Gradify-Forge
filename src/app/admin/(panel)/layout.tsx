@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { requireAdmin } from "@/lib/auth";
+import { adminMode, requireInboxAdmin } from "@/lib/auth";
 import { listInquiries, listProjects } from "@/lib/db";
 import Background from "@/components/Background";
 import AdminNav from "../_components/AdminNav";
@@ -10,13 +10,14 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-    await requireAdmin();
-    const [projects, inquiries] = await Promise.all([listProjects(), listInquiries()]);
+    await requireInboxAdmin();
+    const full = adminMode() === "full";
+    const [projects, inquiries] = await Promise.all([full ? listProjects() : [], listInquiries()]);
 
     return (
         <div className="relative isolate min-h-screen">
             <Background />
-            <AdminNav projectCount={projects.length} unread={inquiries.filter((i) => !i.read).length} />
+            <AdminNav full={full} projectCount={projects.length} unread={inquiries.filter((i) => !i.read).length} />
             <div className="lg:pl-64">
                 <main className="max-w-6xl mx-auto px-4 sm:px-8 py-8 lg:py-10">{children}</main>
             </div>

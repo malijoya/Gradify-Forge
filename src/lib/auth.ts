@@ -4,11 +4,18 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
 /**
- * The admin panel edits files in the repo (content/, public/uploads/), so it only runs locally.
- * On the deployed site it doesn't exist. Set ENABLE_ADMIN=true to override (e.g. `next start` on your machine).
+ * - "full":  everything, including project editing. Project editing writes files in the repo
+ *            (content/, public/uploads/), so this only runs locally (or with ENABLE_ADMIN=true).
+ * - "inbox": the live site, once ADMIN_PASSWORD is set in Vercel. Only login and Inquiries.
+ * - "off":   no admin at all.
  */
+export function adminMode(): "full" | "inbox" | "off" {
+    if (process.env.NODE_ENV !== "production" || process.env.ENABLE_ADMIN === "true") return "full";
+    return process.env.ADMIN_PASSWORD ? "inbox" : "off";
+}
+
 export function adminEnabled() {
-    return process.env.NODE_ENV !== "production" || process.env.ENABLE_ADMIN === "true";
+    return adminMode() !== "off";
 }
 
 const COOKIE = "gf_admin";
@@ -61,8 +68,14 @@ export async function isAdmin() {
     return Number(expires) > Date.now();
 }
 
-/** Call at the top of every admin page and server action. */
+/** Call at the top of every project-management page and server action (full admin only). */
 export async function requireAdmin() {
+    if (adminMode() !== "full") notFound();
+    if (!(await isAdmin())) redirect("/admin/login");
+}
+
+/** For the inquiries inbox, which also works on the live site. */
+export async function requireInboxAdmin() {
     if (!adminEnabled()) notFound();
     if (!(await isAdmin())) redirect("/admin/login");
 }

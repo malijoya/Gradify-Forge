@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { checkPassword, createSession, destroySession, requireAdmin } from "@/lib/auth";
+import { checkPassword, createSession, destroySession, requireAdmin, requireInboxAdmin } from "@/lib/auth";
 import {
     createProject,
     deleteInquiry,
@@ -144,13 +144,13 @@ export async function toggleProject(formData: FormData) {
 // ---------- Inquiries ----------
 
 export async function markInquiry(formData: FormData) {
-    await requireAdmin();
+    await requireInboxAdmin();
     await setInquiryRead(String(formData.get("id")), formData.get("read") === "true");
     revalidatePath("/admin", "layout");
 }
 
 export async function removeInquiry(formData: FormData) {
-    await requireAdmin();
+    await requireInboxAdmin();
     await deleteInquiry(String(formData.get("id")));
     revalidatePath("/admin", "layout");
     redirect("/admin/inquiries?toast=inquiry-deleted");

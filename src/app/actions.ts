@@ -1,8 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { adminEnabled } from "@/lib/auth";
-import { createInquiry, type Inquiry } from "@/lib/db";
+import { createInquiry, inquiryStorage, type Inquiry } from "@/lib/db";
 import { site } from "@/lib/site";
 
 export type ContactState = { ok?: boolean; error?: string } | undefined;
@@ -70,11 +69,15 @@ export async function submitInquiry(_prev: ContactState, formData: FormData): Pr
         console.error("Failed to email inquiry:", err);
     }
 
-    // Locally (where the admin panel runs) inquiries are also kept in data/inquiries.json.
-    if (adminEnabled()) {
-        await createInquiry(inquiry);
-        revalidatePath("/admin", "layout");
-        delivered = true;
+    // Keep a copy for the admin inbox: Redis on the live site, data/inquiries.json locally.
+    if (inquiryStorage()) {
+        try {
+            await createInquiry(inquiry);
+            revalidatePath("/admin", "layout");
+            delivered = true;
+        } catch (err) {
+            console.error("Failed to store inquiry:", err);
+        }
     }
 
     if (!delivered) {

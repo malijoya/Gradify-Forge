@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { ArrowRight, Eye, ImageOff, Inbox, Layers, Mail, Star } from "lucide-react";
 import { clsx } from "clsx";
-import { requireAdmin } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { adminMode, requireAdmin } from "@/lib/auth";
 import { listInquiries, listProjects } from "@/lib/db";
 import { hostname, initials, timeAgo } from "@/lib/format";
 import PageHeader from "../_components/PageHeader";
 import QuickAdd from "../_components/QuickAdd";
 
 export default async function Dashboard() {
+    if (adminMode() === "inbox") redirect("/admin/inquiries");
     await requireAdmin();
     const [projects, inquiries] = await Promise.all([listProjects(), listInquiries()]);
     const unread = inquiries.filter((i) => !i.read).length;

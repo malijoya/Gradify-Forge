@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Building2, Inbox, Mail, MailOpen, Reply, Trash2 } from "lucide-react";
 import { clsx } from "clsx";
-import { requireAdmin } from "@/lib/auth";
-import { listInquiries } from "@/lib/db";
+import { requireInboxAdmin } from "@/lib/auth";
+import { inquiryStorage, listInquiries } from "@/lib/db";
 import { initials, timeAgo } from "@/lib/format";
 import { markInquiry, removeInquiry } from "../../actions";
 import ActionButton from "../../_components/ActionButton";
@@ -10,7 +10,7 @@ import PageHeader from "../../_components/PageHeader";
 import ConfirmButton from "../ConfirmButton";
 
 export default async function Inquiries({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
-    await requireAdmin();
+    await requireInboxAdmin();
     const [all, { filter }] = await Promise.all([listInquiries(), searchParams]);
     const unreadOnly = filter === "unread";
     const unread = all.filter((i) => !i.read).length;
@@ -22,6 +22,13 @@ export default async function Inquiries({ searchParams }: { searchParams: Promis
     return (
         <div className="animate-fade-in-up">
             <PageHeader title="Inquiries" subtitle="Messages from potential clients sent through your contact form." />
+
+            {!inquiryStorage() && (
+                <div className="mb-6 rounded-xl border border-amber-400/20 bg-amber-500/[0.07] p-4 text-sm text-amber-200 leading-relaxed">
+                    Messages are only being emailed right now, so this inbox stays empty. To keep a copy here, add an Upstash Redis
+                    database in Vercel (Storage &gt; Create Database &gt; Upstash for Redis), connect it to this project and redeploy.
+                </div>
+            )}
 
             <div className="flex gap-1 p-1 rounded-xl bg-black/30 border border-white/[0.07] w-fit mb-6">
                 <Link href="/admin/inquiries" className={tab(!unreadOnly)}>

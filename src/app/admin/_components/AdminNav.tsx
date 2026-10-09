@@ -8,33 +8,39 @@ import LogoMark from "@/components/LogoMark";
 import { site } from "@/lib/site";
 import { logout } from "../actions";
 
-type Props = { projectCount: number; unread: number };
+/** `full` is false on the live site, where only the inquiries inbox is available. */
+type Props = { full: boolean; projectCount: number; unread: number };
 
-export default function AdminNav({ projectCount, unread }: Props) {
+export default function AdminNav({ full, projectCount, unread }: Props) {
     const pathname = usePathname();
-    const items = [
-        { href: "/admin", label: "Dashboard", icon: LayoutDashboard, badge: null },
-        { href: "/admin/projects", label: "Projects", icon: Layers, badge: projectCount ? { n: projectCount, hot: false } : null },
-        { href: "/admin/inquiries", label: "Inquiries", icon: Inbox, badge: unread ? { n: unread, hot: true } : null },
-    ];
+    const inbox = { href: "/admin/inquiries", label: "Inquiries", icon: Inbox, badge: unread ? { n: unread, hot: true } : null };
+    const items = full
+        ? [
+              { href: "/admin", label: "Dashboard", icon: LayoutDashboard, badge: null },
+              { href: "/admin/projects", label: "Projects", icon: Layers, badge: projectCount ? { n: projectCount, hot: false } : null },
+              inbox,
+          ]
+        : [inbox];
     const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
 
     return (
         <>
             {/* Desktop sidebar */}
             <aside className="hidden lg:flex fixed inset-y-0 left-0 z-40 w-64 flex-col border-r border-white/[0.07] bg-black/30 backdrop-blur-xl p-4">
-                <Link href="/admin" className="flex items-center gap-2.5 px-2 py-2 mb-6">
+                <Link href={full ? "/admin" : "/admin/inquiries"} className="flex items-center gap-2.5 px-2 py-2 mb-6">
                     <LogoMark />
                     <span className="font-semibold tracking-tight">{site.name}</span>
                     <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/[0.06] text-gray-400">Admin</span>
                 </Link>
 
-                <Link
-                    href="/admin/projects/new"
-                    className="mb-6 flex items-center justify-center gap-2 h-10 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors shadow-[0_0_24px_-8px_rgba(255,255,255,0.6)]"
-                >
-                    <Plus className="w-4 h-4" /> New project
-                </Link>
+                {full && (
+                    <Link
+                        href="/admin/projects/new"
+                        className="mb-6 flex items-center justify-center gap-2 h-10 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors shadow-[0_0_24px_-8px_rgba(255,255,255,0.6)]"
+                    >
+                        <Plus className="w-4 h-4" /> New project
+                    </Link>
+                )}
 
                 <div className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">Manage</div>
                 <nav className="space-y-1">
@@ -69,9 +75,15 @@ export default function AdminNav({ projectCount, unread }: Props) {
 
                 <div className="mt-auto mb-4 rounded-xl border border-sky-400/15 bg-sky-500/[0.06] p-3 text-xs text-gray-400 leading-relaxed">
                     <div className="flex items-center gap-1.5 font-semibold text-sky-300 mb-1">
-                        <UploadCloud className="w-3.5 h-3.5" /> Publishing
+                        <UploadCloud className="w-3.5 h-3.5" /> {full ? "Publishing" : "Live inbox"}
                     </div>
-                    Changes here are saved on this computer. Run <code className="text-gray-200">npm run publish</code> to push them to GitHub and update the live site.
+                    {full ? (
+                        <>
+                            Changes here are saved on this computer. Run <code className="text-gray-200">npm run publish</code> to push them to GitHub and update the live site.
+                        </>
+                    ) : (
+                        <>Messages from the contact form land here and in your email. Projects are edited from the admin panel on your computer.</>
+                    )}
                 </div>
                 <div className="space-y-1 pt-4 border-t border-white/[0.07]">
                     <Link href="/" target="_blank" className="flex items-center gap-3 px-3 h-10 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-white/[0.04] transition-colors">
@@ -88,14 +100,16 @@ export default function AdminNav({ projectCount, unread }: Props) {
             {/* Mobile top bar */}
             <header className="lg:hidden sticky top-0 z-40 border-b border-white/[0.07] bg-black/60 backdrop-blur-xl">
                 <div className="flex items-center justify-between px-4 h-14">
-                    <Link href="/admin" className="flex items-center gap-2">
+                    <Link href={full ? "/admin" : "/admin/inquiries"} className="flex items-center gap-2">
                         <LogoMark className="w-8 h-8" />
                         <span className="font-semibold tracking-tight text-sm">{site.name}</span>
                     </Link>
                     <div className="flex items-center gap-1">
-                        <Link href="/admin/projects/new" aria-label="New project" className="grid place-items-center w-9 h-9 rounded-lg bg-white text-black">
-                            <Plus className="w-4 h-4" />
-                        </Link>
+                        {full && (
+                            <Link href="/admin/projects/new" aria-label="New project" className="grid place-items-center w-9 h-9 rounded-lg bg-white text-black">
+                                <Plus className="w-4 h-4" />
+                            </Link>
+                        )}
                         <Link href="/" target="_blank" aria-label="View website" className="grid place-items-center w-9 h-9 rounded-lg text-gray-400 hover:bg-white/10">
                             <ExternalLink className="w-4 h-4" />
                         </Link>

@@ -7,7 +7,8 @@ import { randomUUID } from "crypto";
  * File-backed storage, edited locally through the admin panel:
  *
  * - content/projects.json  Committed to git. Push it and Vercel rebuilds the portfolio from it.
- * - data/inquiries.json    Contact-form messages. Git-ignored (it holds clients' personal details).
+ * - data/inquiries.json    Contact-form messages when running locally. Git-ignored (it holds clients'
+ *                          personal details). On the live site they go to Redis instead (see Inquiries below).
  *
  * The live site only reads projects at build time; it never writes files.
  */
@@ -118,26 +119,74 @@ export function deleteProject(id: string) {
 }
 
 // ---------- Inquiries ----------
+//
+// Where contact-form messages are kept:
+// - "redis": an Upstash Redis database (add it from Vercel > Storage). Works on the live site.
+// - "file":  data/inquiries.json, only where the full admin panel runs (on your computer).
+// - null:    nowhere; messages are only emailed.
 
-export async function listInquiries() {
-    return (await inquiriesStore.load()).sort(newest);
+const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const INQUIRIES_KEY = "inquiries";
+
+export function inquiryStorage(): "redis" | "file" | null {
+    if (REDIS_URL && REDIS_TOKEN) return "redis";
+    if (process.env.NODE_ENV !== "production" || process.env.ENABLE_ADMIN === "true") return "file";
+    return null;
 }
 
-export function createInquiry(input: Omit<Inquiry, "id" | "createdAt" | "read">) {
-    return inquiriesStore.mutate((items) => {
-        const inquiry: Inquiry = { ...input, id: randomUUID(), read: false, createdAt: new Date().toISOString() };
-        return { items: [...items, inquiry], result: inquiry };
+/** Runs one Redis command over Upstash's REST API (no client library needed). */
+async function redis<T>(...command: string[]): Promise<T> {
+    const res = await fetch(REDIS_URL!, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${REDIS_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify(command),
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
     });
+    const body = (await res.json()) as { result?: T; error?: string };
+    if (!res.ok || body.error) throw new Error(`Redis ${command[0]} failed: ${body.error ?? res.status}`);
+    return body.result as T;
 }
 
-export function setInquiryRead(id: string, read: boolean) {
-    return inquiriesStore.mutate((items) => {
+export async function listInquiries(): Promise<Inquiry[]> {
+    const storage = inquiryStorage();
+    if (storage === "redis") {
+        // HGETALL returns [id, json, id, json, ...]
+        const flat = await redis<string[]>("HGETALL", INQUIRIES_KEY);
+        const items: Inquiry[] = [];
+        for (let i = 1; i < flat.length; i += 2) items.push(JSON.parse(flat[i]));
+        return items.sort(newest);
+    }
+    if (storage === "file") return (await inquiriesStore.load()).sort(newest);
+    return [];
+}
+
+export async function createInquiry(input: Omit<Inquiry, "id" | "createdAt" | "read">) {
+    const inquiry: Inquiry = { ...input, id: randomUUID(), read: false, createdAt: new Date().toISOString() };
+    const storage = inquiryStorage();
+    if (storage === "redis") await redis("HSET", INQUIRIES_KEY, inquiry.id, JSON.stringify(inquiry));
+    else if (storage === "file") await inquiriesStore.mutate((items) => ({ items: [...items, inquiry], result: undefined }));
+    return inquiry;
+}
+
+export async function setInquiryRead(id: string, read: boolean) {
+    if (inquiryStorage() === "redis") {
+        const json = await redis<string | null>("HGET", INQUIRIES_KEY, id);
+        if (json) await redis("HSET", INQUIRIES_KEY, id, JSON.stringify({ ...JSON.parse(json), read }));
+        return;
+    }
+    await inquiriesStore.mutate((items) => {
         const inquiry = items.find((i) => i.id === id);
         if (inquiry) inquiry.read = read;
         return { items, result: undefined };
     });
 }
 
-export function deleteInquiry(id: string) {
-    return inquiriesStore.mutate((items) => ({ items: items.filter((i) => i.id !== id), result: undefined }));
+export async function deleteInquiry(id: string) {
+    if (inquiryStorage() === "redis") {
+        await redis("HDEL", INQUIRIES_KEY, id);
+        return;
+    }
+    await inquiriesStore.mutate((items) => ({ items: items.filter((i) => i.id !== id), result: undefined }));
 }
